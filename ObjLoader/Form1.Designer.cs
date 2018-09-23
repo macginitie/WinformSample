@@ -29,19 +29,19 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.lblLoadProgress = new System.Windows.Forms.Label();
+            this.btnCancelLoading = new System.Windows.Forms.Button();
             this.btnLoadFile = new System.Windows.Forms.Button();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.txtObjFile = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.btnClose = new System.Windows.Forms.Button();
-            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.lblLoadProgress = new System.Windows.Forms.Label();
-            this.lstMeshList = new System.Windows.Forms.ListBox();
-            this.label2 = new System.Windows.Forms.Label();
             this.MeshInfoBox = new System.Windows.Forms.GroupBox();
             this.lblVertexCount = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
+            this.lstMeshList = new System.Windows.Forms.ListBox();
+            this.btnClose = new System.Windows.Forms.Button();
+            this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.MeshInfoBox.SuspendLayout();
@@ -52,7 +52,7 @@
             this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.Controls.Add(this.lblLoadProgress);
-            this.panel1.Controls.Add(this.button1);
+            this.panel1.Controls.Add(this.btnCancelLoading);
             this.panel1.Controls.Add(this.btnLoadFile);
             this.panel1.Controls.Add(this.btnBrowse);
             this.panel1.Controls.Add(this.label1);
@@ -62,24 +62,34 @@
             this.panel1.Size = new System.Drawing.Size(783, 95);
             this.panel1.TabIndex = 0;
             // 
-            // button1
+            // lblLoadProgress
             // 
-            this.button1.Location = new System.Drawing.Point(642, 56);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(95, 23);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Cancel Loading";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Visible = false;
+            this.lblLoadProgress.AutoSize = true;
+            this.lblLoadProgress.Location = new System.Drawing.Point(256, 59);
+            this.lblLoadProgress.Name = "lblLoadProgress";
+            this.lblLoadProgress.Size = new System.Drawing.Size(0, 13);
+            this.lblLoadProgress.TabIndex = 6;
+            // 
+            // btnCancelLoading
+            // 
+            this.btnCancelLoading.Location = new System.Drawing.Point(642, 56);
+            this.btnCancelLoading.Name = "btnCancelLoading";
+            this.btnCancelLoading.Size = new System.Drawing.Size(95, 23);
+            this.btnCancelLoading.TabIndex = 5;
+            this.btnCancelLoading.Text = "Cancel Loading";
+            this.btnCancelLoading.UseVisualStyleBackColor = true;
+            this.btnCancelLoading.Visible = false;
             // 
             // btnLoadFile
             // 
+            this.btnLoadFile.Enabled = false;
             this.btnLoadFile.Location = new System.Drawing.Point(106, 56);
             this.btnLoadFile.Name = "btnLoadFile";
             this.btnLoadFile.Size = new System.Drawing.Size(131, 27);
             this.btnLoadFile.TabIndex = 3;
             this.btnLoadFile.Text = "&Load File";
             this.btnLoadFile.UseVisualStyleBackColor = true;
+            this.btnLoadFile.Click += new System.EventHandler(this.BtnLoadFile_Click);
             // 
             // btnBrowse
             // 
@@ -110,6 +120,7 @@
             this.txtObjFile.Name = "txtObjFile";
             this.txtObjFile.Size = new System.Drawing.Size(529, 20);
             this.txtObjFile.TabIndex = 0;
+            this.txtObjFile.TextChanged += new System.EventHandler(this.TxtObjFile_TextChanged);
             // 
             // panel2
             // 
@@ -123,46 +134,6 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(783, 228);
             this.panel2.TabIndex = 1;
-            // 
-            // btnClose
-            // 
-            this.btnClose.Location = new System.Drawing.Point(719, 361);
-            this.btnClose.Name = "btnClose";
-            this.btnClose.Size = new System.Drawing.Size(54, 21);
-            this.btnClose.TabIndex = 2;
-            this.btnClose.Text = "&Close";
-            this.btnClose.UseVisualStyleBackColor = true;
-            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
-            // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // lblLoadProgress
-            // 
-            this.lblLoadProgress.AutoSize = true;
-            this.lblLoadProgress.Location = new System.Drawing.Point(256, 59);
-            this.lblLoadProgress.Name = "lblLoadProgress";
-            this.lblLoadProgress.Size = new System.Drawing.Size(0, 13);
-            this.lblLoadProgress.TabIndex = 6;
-            // 
-            // lstMeshList
-            // 
-            this.lstMeshList.FormattingEnabled = true;
-            this.lstMeshList.Location = new System.Drawing.Point(20, 43);
-            this.lstMeshList.Name = "lstMeshList";
-            this.lstMeshList.Size = new System.Drawing.Size(259, 160);
-            this.lstMeshList.TabIndex = 0;
-            this.lstMeshList.SelectedIndexChanged += new System.EventHandler(this.LstMeshList_SelectedIndexChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(18, 22);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(44, 13);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Meshes";
             // 
             // MeshInfoBox
             // 
@@ -181,6 +152,38 @@
             this.lblVertexCount.Name = "lblVertexCount";
             this.lblVertexCount.Size = new System.Drawing.Size(0, 13);
             this.lblVertexCount.TabIndex = 1;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(18, 22);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(44, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Meshes";
+            // 
+            // lstMeshList
+            // 
+            this.lstMeshList.FormattingEnabled = true;
+            this.lstMeshList.Location = new System.Drawing.Point(20, 43);
+            this.lstMeshList.Name = "lstMeshList";
+            this.lstMeshList.Size = new System.Drawing.Size(259, 160);
+            this.lstMeshList.TabIndex = 0;
+            this.lstMeshList.SelectedIndexChanged += new System.EventHandler(this.LstMeshList_SelectedIndexChanged);
+            // 
+            // btnClose
+            // 
+            this.btnClose.Location = new System.Drawing.Point(719, 361);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(54, 21);
+            this.btnClose.TabIndex = 2;
+            this.btnClose.Text = "&Close";
+            this.btnClose.UseVisualStyleBackColor = true;
+            this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
             // 
             // Form1
             // 
@@ -208,7 +211,7 @@
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtObjFile;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnCancelLoading;
         private System.Windows.Forms.Button btnLoadFile;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Button btnClose;

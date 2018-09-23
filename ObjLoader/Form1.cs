@@ -29,18 +29,9 @@ namespace ObjLoader
             }
         }
 
-        private bool OK2Close()
-        {
-            // just return true for now
-            return true;
-        }
-
         private void BtnClose_Click(object sender, EventArgs e)
         {
-            if (OK2Close())
-            {
-                Application.Exit();
-            }
+            Application.Exit();
         }
 
         private void UpdateMeshInfoBox(int itemIndex)
@@ -51,6 +42,27 @@ namespace ObjLoader
         private void LstMeshList_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateMeshInfoBox(lstMeshList.SelectedIndex);
+        }
+
+        private void BtnLoadFile_Click(object sender, EventArgs e)
+        {
+            EnableButtons(false);
+            btnCancelLoading.Visible = true;
+
+            btnCancelLoading.Visible = false;
+            EnableButtons();
+        }
+
+        private void EnableButtons(bool newState=true)
+        {
+            btnBrowse.Enabled = newState;
+            btnLoadFile.Enabled = newState;
+            btnClose.Enabled = newState;
+        }
+
+        private void TxtObjFile_TextChanged(object sender, EventArgs e)
+        {
+            btnLoadFile.Enabled = (!String.IsNullOrWhiteSpace(txtObjFile.Text));
         }
     }
 }
