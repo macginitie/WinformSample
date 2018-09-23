@@ -42,5 +42,15 @@ namespace ObjLoader
                 Application.Exit();
             }
         }
+
+        private void UpdateMeshInfoBox(int itemIndex)
+        {
+            MessageBox.Show(String.Format("{0}", itemIndex));
+        }
+
+        private void LstMeshList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            UpdateMeshInfoBox(lstMeshList.SelectedIndex);
+        }
     }
 }
