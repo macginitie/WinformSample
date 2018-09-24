@@ -27,11 +27,7 @@ namespace ObjLoader
             nextMeshName = "";
             while (index < fileLines.Length)
             {
-                if (ProcessLine(fileLines[index], ref nextMeshName))
-                {
-                    ++index;
-                }
-                else
+                if (! ProcessLine(fileLines[index++], ref nextMeshName))
                 {
                     break;
                 }

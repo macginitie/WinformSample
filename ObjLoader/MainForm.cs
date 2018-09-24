@@ -9,7 +9,6 @@ namespace ObjLoader
     public partial class MainForm : Form
     {
         string _objFilePath;
-        //ObjFileInfo _objFileInfo = null;
         int _meshCount = 0;
         List<MeshInfo> _meshInfoList = null;
 
@@ -22,6 +21,7 @@ namespace ObjLoader
 
         private void BtnBrowse_Click(object sender, EventArgs e)
         {
+            openFileDialog1.FileName = txtObjFile.Text;
             DialogResult result = openFileDialog1.ShowDialog();
             if (DialogResult.OK == result)
             {
@@ -56,6 +56,7 @@ namespace ObjLoader
 
         private void BtnLoadFile_Click(object sender, EventArgs e)
         {
+            _objFilePath = txtObjFile.Text;
             if (!File.Exists(_objFilePath)) // guard clause
             {
                 MessageBox.Show(String.Format("File [{0}] not found", _objFilePath));
@@ -78,7 +79,7 @@ namespace ObjLoader
         }
 
         // This event handler is where the time-consuming work is done.
-        // this should be refactored :-/ 
+        // this method is a mess & should be refactored :-/ 
         private void BgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
@@ -87,8 +88,10 @@ namespace ObjLoader
             string meshName = "";
             string[] fileLines = null;
             int index = 0;
+            const int MinFileLines = 5; // "g mesh\nv x y z\nv a b c\nv u v w\nf 0 1 2" ??
             // super-simple FSM
-            for (int state = 0; state < 3; state++)
+            int state = 0;
+            while (state < 3)
             {
                 if (worker.CancellationPending == true)
                 {
@@ -103,13 +106,21 @@ namespace ObjLoader
                         case 0:
                             // read file data
                             fileLines = File.ReadAllLines(_objFilePath);
+                            if (fileLines.Length < MinFileLines)
+                            {
+                                // notify user about error condition
+                                MessageBox.Show("Error: file format not recognized");
+                                worker.CancelAsync();
+                                e.Cancel = true;
+                                return;
+                            }
                             ++state;
                             break;
                         case 1:
                             // scan for 1st occurrence of "g"                            
                             while (index < fileLines.Length)
                             {
-                                string[] parts = fileLines[index].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                string[] parts = fileLines[index++].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
                                 if (parts.Length > 0)
                                 {
@@ -122,9 +133,14 @@ namespace ObjLoader
                                     }
                                 }
                             }
-                            // error condition if no "g" in the file
-                            worker.CancelAsync();
-                            e.Cancel = true;
+                            if (state == 1)
+                            {
+                                // notify user of error condition if no "g" in the file
+                                MessageBox.Show("Error: no named mesh (group) found in file");
+                                worker.CancelAsync();
+                                e.Cancel = true;
+                                return;
+                            }
                             break;
                         case 2:
                             MeshInfo meshInfo = new MeshInfo
@@ -132,11 +148,15 @@ namespace ObjLoader
                                 MeshName = meshName
                             };
                             meshInfo.LoadFileLines(fileLines, ref index, out meshName);
+                            _meshInfoList.Add(meshInfo);
                             if (String.IsNullOrEmpty(meshName))
                             {
                                 ++state;
                             }
-                            _meshInfoList.Add(meshInfo);
+                            else
+                            {
+                                ++currentMesh;
+                            }
                             break;
                     }
                     worker.ReportProgress(currentMesh);
