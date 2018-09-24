@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
@@ -8,8 +9,9 @@ namespace ObjLoader
     public partial class MainForm : Form
     {
         string _objFilePath;
-        ObjFileInfo _objFileInfo = null;
+        //ObjFileInfo _objFileInfo = null;
         int _meshCount = 0;
+        List<MeshInfo> _meshInfoList = null;
 
         public MainForm()
         {
@@ -35,8 +37,10 @@ namespace ObjLoader
 
         private void UpdateMeshInfoBox(int itemIndex)
         {
-            // 2DO
-            MessageBox.Show(String.Format("{0}", itemIndex));
+            foreach (MeshInfo mesh in _meshInfoList)
+            {
+                lstMeshList.Items.Add(mesh.MeshName);
+            }
         }
 
         private void LstMeshList_SelectedIndexChanged(object sender, EventArgs e)
@@ -52,6 +56,12 @@ namespace ObjLoader
 
         private void BtnLoadFile_Click(object sender, EventArgs e)
         {
+            if (!File.Exists(_objFilePath)) // guard clause
+            {
+                MessageBox.Show(String.Format("File [{0}] not found", _objFilePath));
+                // early exit
+                return;
+            }
             if (bgWorker.IsBusy != true)
             {
                 EnableButtons(false);
@@ -60,14 +70,25 @@ namespace ObjLoader
                 // Start the asynchronous operation.
                 bgWorker.RunWorkerAsync();
             }
+            else
+            {
+                // I don't expect this to happen, but just in case
+                MessageBox.Show("Load already in progress");
+            }
         }
 
         // This event handler is where the time-consuming work is done.
+        // this should be refactored :-/ 
         private void BgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
 
-            for (int i = 1; i <= 10; i++)
+            int currentMesh = 1;
+            string meshName = "";
+            string[] fileLines = null;
+            int index = 0;
+            // super-simple FSM
+            for (int state = 0; state < 3; state++)
             {
                 if (worker.CancellationPending == true)
                 {
@@ -77,13 +98,54 @@ namespace ObjLoader
                 else
                 {
                     // Perform a time consuming operation and report progress.
-                    System.Threading.Thread.Sleep(500);
-                    worker.ReportProgress(i);
+                    switch (state)
+                    {
+                        case 0:
+                            // read file data
+                            fileLines = File.ReadAllLines(_objFilePath);
+                            ++state;
+                            break;
+                        case 1:
+                            // scan for 1st occurrence of "g"                            
+                            while (index < fileLines.Length)
+                            {
+                                string[] parts = fileLines[index].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                                if (parts.Length > 0)
+                                {
+                                    if (parts[0] == "g")
+                                    {
+                                        meshName = parts[1]; // danger: exception if line contains only "g" (2DO)
+                                        _meshInfoList = new List<MeshInfo>();
+                                        ++state;
+                                        break;
+                                    }
+                                }
+                            }
+                            // error condition if no "g" in the file
+                            worker.CancelAsync();
+                            e.Cancel = true;
+                            break;
+                        case 2:
+                            MeshInfo meshInfo = new MeshInfo
+                            {
+                                MeshName = meshName
+                            };
+                            meshInfo.LoadFileLines(fileLines, ref index, out meshName);
+                            if (String.IsNullOrEmpty(meshName))
+                            {
+                                ++state;
+                            }
+                            _meshInfoList.Add(meshInfo);
+                            break;
+                    }
+                    worker.ReportProgress(currentMesh);
                 }
             }
         }
 
-        // This event handler updates the progress.
+        // This event handler updates the progress. This is a hack, using "percentage"
+        // to hold the mesh #, but BackgroundWorker has limitations  
         private void BgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             _meshCount = e.ProgressPercentage;
@@ -93,7 +155,6 @@ namespace ObjLoader
         // This event handler deals with the results of the background operation.
         private void BgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-
             btnCancelLoading.Visible = false;
             EnableButtons();
 
@@ -115,22 +176,6 @@ namespace ObjLoader
         {
             // 2DO
             MessageBox.Show("2DO: UpdateMeshList()");
-        }
-
-        private void AsyncLoadFile()
-        { 
-            if ( ! File.Exists(_objFilePath))
-            {
-                MessageBox.Show(String.Format("File [{0}] not found", _objFilePath));
-                return;
-            }
-
-            _objFileInfo = new ObjFileInfo(_objFilePath);
-            if ( ! _objFileInfo.LoadFile())
-            {
-                MessageBox.Show(String.Format("Failed to load {0};\n{1}",
-                    _objFilePath, _objFileInfo.GetErrorInfo()));
-            }
         }
 
         private void EnableButtons(bool newState=true)

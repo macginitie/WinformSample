@@ -21,11 +21,21 @@ namespace ObjLoader
             return _vertices.Count;
         }
 
-        public bool LoadFromFile(string path)
+        // sets meshname to "" if no more meshes; kludgy (I underestimated time required for this task)
+        public void LoadFileLines(string[] fileLines, ref int index, out string nextMeshName)
         {
-            string[] fileLines = File.ReadAllLines(path);
-
-            return true;
+            nextMeshName = "";
+            while (index < fileLines.Length)
+            {
+                if (ProcessLine(fileLines[index], ref nextMeshName))
+                {
+                    ++index;
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
         /// <summary>
@@ -45,30 +55,31 @@ namespace ObjLoader
                     case "g":
                         meshName = parts[1];
                         return false;
-                    case "usemtl": // discard non-geometry data
-                        break;
-                    case "mtllib": // discard non-geometry data
-                        break;
                     case "v":
                         Point3D v = new Point3D(Convert.ToDouble(parts[1]), Convert.ToDouble(parts[2]), Convert.ToDouble(parts[3]));
                         _vertices.Add(v);
                         break;
-                    case "f":
-                        //Face f = new Face();
-                        //f.LoadFromStringArray(parts);
-                        //FaceList.Add(f);
+                    case "vn":
+                        // 2DO
                         break;
                     case "vt":
+                        // 2DO
                         //TextureVertex vt = new TextureVertex();
                         //vt.LoadFromStringArray(parts);
                         //TextureList.Add(vt);
                         //vt.Index = TextureList.Count();
                         break;
-
+                    case "f":
+                        // 2DO
+                        //Face f = new Face();
+                        //f.LoadFromStringArray(parts);
+                        //FaceList.Add(f);
+                        break;
+                    default:    // ignore everything else
+                        break;
                 }
             }
             return true;
         }
-
     }
 }
