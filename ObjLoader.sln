@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28010.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjLoader", "ObjLoader\ObjLoader.csproj", "{D0CD0046-B3EC-46D1-9C1D-717B313B6B6E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTester", "UnitTester\UnitTester.csproj", "{D4D3B409-5EB5-4B0B-995C-57ADF0814B87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ObjParser", "..\ObjParser\ObjParser\ObjParser.csproj", "{04AA9B94-B460-4E73-BAF0-0154494BFE82}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{D0CD0046-B3EC-46D1-9C1D-717B313B6B6E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D0CD0046-B3EC-46D1-9C1D-717B313B6B6E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D0CD0046-B3EC-46D1-9C1D-717B313B6B6E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4D3B409-5EB5-4B0B-995C-57ADF0814B87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4D3B409-5EB5-4B0B-995C-57ADF0814B87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4D3B409-5EB5-4B0B-995C-57ADF0814B87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4D3B409-5EB5-4B0B-995C-57ADF0814B87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04AA9B94-B460-4E73-BAF0-0154494BFE82}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04AA9B94-B460-4E73-BAF0-0154494BFE82}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04AA9B94-B460-4E73-BAF0-0154494BFE82}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04AA9B94-B460-4E73-BAF0-0154494BFE82}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

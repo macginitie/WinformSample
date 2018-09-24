@@ -45,6 +45,7 @@
             this.lstMeshList = new System.Windows.Forms.ListBox();
             this.btnClose = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.bgWorker = new System.ComponentModel.BackgroundWorker();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.MeshInfoBox.SuspendLayout();
@@ -85,6 +86,7 @@
             this.btnCancelLoading.Text = "Cancel Loading";
             this.btnCancelLoading.UseVisualStyleBackColor = true;
             this.btnCancelLoading.Visible = false;
+            this.btnCancelLoading.Click += new System.EventHandler(this.BtnCancelLoading_Click);
             // 
             // btnLoadFile
             // 
@@ -227,6 +229,12 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // bgWorker
+            // 
+            this.bgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BgWorker_DoWork);
+            this.bgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BgWorker_ProgressChanged);
+            this.bgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BgWorker_RunWorkerCompleted);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -268,6 +276,7 @@
         private System.Windows.Forms.Label lblQuadFaceCount;
         private System.Windows.Forms.Label lblTriangularFaceCount;
         private System.Windows.Forms.Label lblNormalCount;
+        private System.ComponentModel.BackgroundWorker bgWorker;
     }
 }
 
