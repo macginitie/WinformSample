@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace ObjLoader
 {
-    public partial class Form1 : Form
+    public partial class MainForm : Form
     {
         string _objFilePath;
 
-        public Form1()
+        public MainForm()
         {
             InitializeComponent();
         }
