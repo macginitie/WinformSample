@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Media.Media3D;
 
 
@@ -12,16 +13,25 @@ namespace ObjLoader
         // so I just set the 3rd value to 0.0
         Point3DCollection _uvCoords = null;
 
+        List<FaceDefinition> _triangles = null;
+        List<FaceDefinition> _quadrilaterals = null;
+
         public string MeshName { get; set; }
         public int VertexCount { get { return _vertices.Count; } }
         public int NormalCount { get { return _normals.Count; } }
         public int UVCoordCount { get { return _uvCoords.Count; } }
+        // note: individual values are stored, but convenient access has not
+        // yet been implemented
+        public int TriangularFaceCount { get { return _triangles.Count; } }
+        public int QuadFaceCount { get { return _quadrilaterals.Count; } }
 
         public MeshInfo()
         {
             _vertices = new Point3DCollection();
             _normals = new Vector3DCollection();
             _uvCoords = new Point3DCollection();
+            _triangles = new List<FaceDefinition>();
+            _quadrilaterals = new List<FaceDefinition>();
         }
 
         public MeshInfo(Point3DCollection vert, Vector3DCollection norm, 
@@ -71,14 +81,22 @@ namespace ObjLoader
                         _normals.Add(vn);
                         break;
                     case "vt":
+                        // setting 3rd coord to 0.0 so I can use the Point3DCollection class (just for convenience)
                         Point3D vt = new Point3D(Convert.ToDouble(parts[1]), Convert.ToDouble(parts[2]), 0.0);
-                        _vertices.Add(vt);
+                        _uvCoords.Add(vt);
                         break;
                     case "f":
-                        // 2DO
-                        //Face f = new Face();
-                        //f.LoadFromStringArray(parts);
-                        //FaceList.Add(f);
+                        FaceDefinition faceDef = new FaceDefinition();
+                        if (parts.Length == 4) // 3 vertices plus the "f"
+                        {
+                            faceDef.AddTriangularFace(parts[1], parts[2], parts[3]);
+                            _triangles.Add(faceDef);
+                        }
+                        else // note: pentagonal, hexagonal, etc. faces are handled as quadrilaterals (not covered in spec)
+                        {
+                            faceDef.AddQuadrilateralFace(parts[1], parts[2], parts[3], parts[4]);
+                            _quadrilaterals.Add(faceDef);
+                        }
                         break;
                     default:    // ignore everything else
                         break;

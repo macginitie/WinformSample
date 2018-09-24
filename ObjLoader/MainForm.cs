@@ -56,20 +56,12 @@ namespace ObjLoader
             else
             {
                 MeshInfoBox.Text = String.Format("Mesh Info for {0}", _meshInfoList[itemIndex].MeshName);
-                try
-                {
-                    MeshInfo meshInfo = _meshInfoList[itemIndex];
-                    lblQuadFaceCount.Text = String.Format("{0} quadrilateral faces", 99 - itemIndex);
-                    lblTriangularFaceCount.Text = String.Format("{0} triangular faces", 99 - itemIndex);
-                    lblVertexCount.Text = String.Format("{0} vertices", meshInfo.VertexCount);
-                    lblNormalCount.Text = String.Format("{0} normals", meshInfo.NormalCount);
-                    lblTextureCoordCount.Text = String.Format("{0} uv coordinates", meshInfo.UVCoordCount);
-                }
-                catch (InvalidOperationException ex)
-                {
-                    // 
-                    //string forDebugging = ex.Message;
-                }
+                MeshInfo meshInfo = _meshInfoList[itemIndex];
+                lblQuadFaceCount.Text = String.Format("{0} quadrilateral faces", meshInfo.QuadFaceCount);
+                lblTriangularFaceCount.Text = String.Format("{0} triangular faces", meshInfo.TriangularFaceCount);
+                lblVertexCount.Text = String.Format("{0} vertices", meshInfo.VertexCount);
+                lblNormalCount.Text = String.Format("{0} normals", meshInfo.NormalCount);
+                lblTextureCoordCount.Text = String.Format("{0} uv coordinates", meshInfo.UVCoordCount);
             }
         }
 
