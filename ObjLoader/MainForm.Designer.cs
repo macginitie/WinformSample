@@ -46,6 +46,7 @@
             this.btnClose = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.bgWorker = new System.ComponentModel.BackgroundWorker();
+            this.lblTextureCoordCount = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.MeshInfoBox.SuspendLayout();
@@ -149,6 +150,7 @@
             // 
             this.MeshInfoBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.MeshInfoBox.Controls.Add(this.lblTextureCoordCount);
             this.MeshInfoBox.Controls.Add(this.lblQuadFaceCount);
             this.MeshInfoBox.Controls.Add(this.lblTriangularFaceCount);
             this.MeshInfoBox.Controls.Add(this.lblNormalCount);
@@ -163,34 +165,38 @@
             // lblQuadFaceCount
             // 
             this.lblQuadFaceCount.AutoSize = true;
-            this.lblQuadFaceCount.Location = new System.Drawing.Point(249, 96);
+            this.lblQuadFaceCount.Location = new System.Drawing.Point(30, 98);
             this.lblQuadFaceCount.Name = "lblQuadFaceCount";
-            this.lblQuadFaceCount.Size = new System.Drawing.Size(0, 13);
+            this.lblQuadFaceCount.Size = new System.Drawing.Size(107, 13);
             this.lblQuadFaceCount.TabIndex = 4;
+            this.lblQuadFaceCount.Text = "4 Quadrilateral Faces";
             // 
             // lblTriangularFaceCount
             // 
             this.lblTriangularFaceCount.AutoSize = true;
-            this.lblTriangularFaceCount.Location = new System.Drawing.Point(241, 88);
+            this.lblTriangularFaceCount.Location = new System.Drawing.Point(30, 74);
             this.lblTriangularFaceCount.Name = "lblTriangularFaceCount";
-            this.lblTriangularFaceCount.Size = new System.Drawing.Size(0, 13);
+            this.lblTriangularFaceCount.Size = new System.Drawing.Size(95, 13);
             this.lblTriangularFaceCount.TabIndex = 3;
+            this.lblTriangularFaceCount.Text = "3 Triangular Faces";
             // 
             // lblNormalCount
             // 
             this.lblNormalCount.AutoSize = true;
-            this.lblNormalCount.Location = new System.Drawing.Point(233, 80);
+            this.lblNormalCount.Location = new System.Drawing.Point(30, 50);
             this.lblNormalCount.Name = "lblNormalCount";
-            this.lblNormalCount.Size = new System.Drawing.Size(0, 13);
+            this.lblNormalCount.Size = new System.Drawing.Size(54, 13);
             this.lblNormalCount.TabIndex = 2;
+            this.lblNormalCount.Text = "2 Normals";
             // 
             // lblVertexCount
             // 
             this.lblVertexCount.AutoSize = true;
-            this.lblVertexCount.Location = new System.Drawing.Point(225, 72);
+            this.lblVertexCount.Location = new System.Drawing.Point(30, 26);
             this.lblVertexCount.Name = "lblVertexCount";
-            this.lblVertexCount.Size = new System.Drawing.Size(0, 13);
+            this.lblVertexCount.Size = new System.Drawing.Size(54, 13);
             this.lblVertexCount.TabIndex = 1;
+            this.lblVertexCount.Text = "1 Vertices";
             // 
             // lblMeshList
             // 
@@ -230,6 +236,15 @@
             this.bgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BgWorker_DoWork);
             this.bgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BgWorker_ProgressChanged);
             this.bgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BgWorker_RunWorkerCompleted);
+            // 
+            // lblTextureCoordCount
+            // 
+            this.lblTextureCoordCount.AutoSize = true;
+            this.lblTextureCoordCount.Location = new System.Drawing.Point(30, 122);
+            this.lblTextureCoordCount.Name = "lblTextureCoordCount";
+            this.lblTextureCoordCount.Size = new System.Drawing.Size(111, 13);
+            this.lblTextureCoordCount.TabIndex = 5;
+            this.lblTextureCoordCount.Text = "5 Texture Coordinates";
             // 
             // MainForm
             // 
@@ -273,6 +288,7 @@
         private System.Windows.Forms.Label lblTriangularFaceCount;
         private System.Windows.Forms.Label lblNormalCount;
         private System.ComponentModel.BackgroundWorker bgWorker;
+        private System.Windows.Forms.Label lblTextureCoordCount;
     }
 }
 

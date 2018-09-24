@@ -10,15 +10,11 @@ namespace ObjLoader
         Point3DCollection _vertices = null;
 
         public string MeshName { get; set; }
+        public int VertexCount { get { return _vertices.Count; } }
 
         public MeshInfo()
         {
             _vertices = new Point3DCollection();
-        }
-
-        public int VertexCount()
-        {
-            return _vertices.Count;
         }
 
         // sets meshname to "" if no more meshes; kludgy (I underestimated time required for this task)
@@ -37,7 +33,7 @@ namespace ObjLoader
         /// <summary>
         /// Parses and loads a line from an OBJ file.
         /// non-geometry info is discarded.
-        /// returns false when a new mesh is encountered ("g")
+        /// returns false when a new mesh is encountered (the line starts with "g ")
         /// Note: adapted from code obtained from https://github.com/stefangordon/ObjParser
         /// </summary>		
         private bool ProcessLine(string line, ref string meshName)
@@ -49,7 +45,7 @@ namespace ObjLoader
                 switch (parts[0])
                 {
                     case "g":
-                        meshName = parts[1];
+                        meshName = parts[1]; // 2DO: handle error condition if "g" is alone on the line
                         return false;
                     case "v":
                         Point3D v = new Point3D(Convert.ToDouble(parts[1]), Convert.ToDouble(parts[2]), Convert.ToDouble(parts[3]));

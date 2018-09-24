@@ -11,12 +11,22 @@ namespace ObjLoader
         string _objFilePath;
         int _meshCount = 0;
         List<MeshInfo> _meshInfoList = null;
-
+        
         public MainForm()
         {
             InitializeComponent();
+            ResetMeshInfoLabels();
             bgWorker.WorkerReportsProgress = true;
             bgWorker.WorkerSupportsCancellation = true;
+        }
+
+        private void ResetMeshInfoLabels()
+        {
+            lblNormalCount.Text = "";
+            lblQuadFaceCount.Text = "";
+            lblTriangularFaceCount.Text = "";
+            lblVertexCount.Text = "";
+            lblTextureCoordCount.Text = "";
         }
 
         private void BtnBrowse_Click(object sender, EventArgs e)
@@ -37,15 +47,39 @@ namespace ObjLoader
 
         private void UpdateMeshInfoBox(int itemIndex)
         {
-            foreach (MeshInfo mesh in _meshInfoList)
+            if (itemIndex < 0)
             {
-                lstMeshList.Items.Add(mesh.MeshName);
+                // nothing selected
+                ResetMeshInfoLabels();
+            }
+            else
+            {
+                MeshInfoBox.Text = String.Format("Mesh Info for {0}", _meshInfoList[itemIndex].MeshName);
+                try
+                {
+                    lblVertexCount.Text = String.Format("{0} vertices", _meshInfoList[itemIndex].VertexCount);
+                    lblNormalCount.Text = String.Format("{0} normals", 99 - itemIndex);
+                    lblQuadFaceCount.Text = String.Format("{0} quadrilateral faces", 99 - itemIndex);
+                    lblTriangularFaceCount.Text = String.Format("{0} normals", 99 - itemIndex);
+                    lblTextureCoordCount.Text = String.Format("{0} normals", 99 - itemIndex);
+                }
+                catch (InvalidOperationException ex)
+                {
+                    // 
+                    string forDebugging = ex.Message;
+                }
             }
         }
 
         private void LstMeshList_SelectedIndexChanged(object sender, EventArgs e)
         {
             UpdateMeshInfoBox(lstMeshList.SelectedIndex);
+        }
+
+        private void ClearMeshInfoList()
+        {
+            lstMeshList.Items.Clear();
+            Refresh();
         }
 
         public void UpdateProgress()
@@ -63,18 +97,20 @@ namespace ObjLoader
                 // early exit
                 return;
             }
-            if (bgWorker.IsBusy != true)
+            if (bgWorker.IsBusy)
             {
+                // I don't expect this to happen, but just in case
+                MessageBox.Show("Load already in progress");
+            }
+            else
+            {
+                ResetMeshInfoLabels();
+                ClearMeshInfoList();
                 EnableButtons(false);
                 btnCancelLoading.Visible = true;
                 UpdateProgress();
                 // Start the asynchronous operation.
                 bgWorker.RunWorkerAsync();
-            }
-            else
-            {
-                // I don't expect this to happen, but just in case
-                MessageBox.Show("Load already in progress");
             }
         }
 
@@ -88,8 +124,9 @@ namespace ObjLoader
             string meshName = "";
             string[] fileLines = null;
             int index = 0;
-            const int MinFileLines = 5; // "g mesh\nv x y z\nv a b c\nv u v w\nf 0 1 2" ??
-            // super-simple FSM
+            // require at least "g mesh[\n]v x y z[\n]v a b c[\n]v u v w[\n]f 0 1 2"
+            const int MinFileLines = 5; 
+            // 3-state FSM: reading file; scanning for 1st "g"; loading mesh data
             int state = 0;
             while (state < 3)
             {
@@ -151,12 +188,17 @@ namespace ObjLoader
                             _meshInfoList.Add(meshInfo);
                             if (String.IsNullOrEmpty(meshName))
                             {
+                                // all done loading
                                 ++state;
                             }
                             else
                             {
+                                // another mesh to load
                                 ++currentMesh;
                             }
+                            break;
+                        default:
+                            // "should never happen"
                             break;
                     }
                     worker.ReportProgress(currentMesh);
@@ -164,8 +206,8 @@ namespace ObjLoader
             }
         }
 
-        // This event handler updates the progress. This is a hack, using "percentage"
-        // to hold the mesh #, but BackgroundWorker has limitations  
+        // This event handler updates the progress. Using "percentage"
+        // to hold the mesh # is a hack, but BackgroundWorker has limitations  
         private void BgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             _meshCount = e.ProgressPercentage;
@@ -175,6 +217,7 @@ namespace ObjLoader
         // This event handler deals with the results of the background operation.
         private void BgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            lblLoadProgress.Visible = false;
             btnCancelLoading.Visible = false;
             EnableButtons();
 
@@ -194,8 +237,10 @@ namespace ObjLoader
 
         private void UpdateMeshList()
         {
-            // 2DO
-            MessageBox.Show("2DO: UpdateMeshList()");
+            foreach (MeshInfo meshInfo in _meshInfoList)
+            {
+                lstMeshList.Items.Add(meshInfo.MeshName);
+            }
         }
 
         private void EnableButtons(bool newState=true)
