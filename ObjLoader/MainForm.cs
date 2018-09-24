@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
+using System.Windows.Media.Media3D;
 
 namespace ObjLoader
 {
@@ -57,16 +58,17 @@ namespace ObjLoader
                 MeshInfoBox.Text = String.Format("Mesh Info for {0}", _meshInfoList[itemIndex].MeshName);
                 try
                 {
-                    lblVertexCount.Text = String.Format("{0} vertices", _meshInfoList[itemIndex].VertexCount);
-                    lblNormalCount.Text = String.Format("{0} normals", 99 - itemIndex);
+                    MeshInfo meshInfo = _meshInfoList[itemIndex];
                     lblQuadFaceCount.Text = String.Format("{0} quadrilateral faces", 99 - itemIndex);
-                    lblTriangularFaceCount.Text = String.Format("{0} normals", 99 - itemIndex);
-                    lblTextureCoordCount.Text = String.Format("{0} normals", 99 - itemIndex);
+                    lblTriangularFaceCount.Text = String.Format("{0} triangular faces", 99 - itemIndex);
+                    lblVertexCount.Text = String.Format("{0} vertices", meshInfo.VertexCount);
+                    lblNormalCount.Text = String.Format("{0} normals", meshInfo.NormalCount);
+                    lblTextureCoordCount.Text = String.Format("{0} uv coordinates", meshInfo.UVCoordCount);
                 }
                 catch (InvalidOperationException ex)
                 {
                     // 
-                    string forDebugging = ex.Message;
+                    //string forDebugging = ex.Message;
                 }
             }
         }
@@ -110,7 +112,10 @@ namespace ObjLoader
                 btnCancelLoading.Visible = true;
                 UpdateProgress();
                 // Start the asynchronous operation.
-                bgWorker.RunWorkerAsync();
+                //bgWorker.RunWorkerAsync();
+                BgWorker_DoWork(null, null);
+                // fall back
+                BgWorker_RunWorkerCompleted(null, null);
             }
         }
 
@@ -118,7 +123,7 @@ namespace ObjLoader
         // this method is a mess & should be refactored :-/ 
         private void BgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            BackgroundWorker worker = sender as BackgroundWorker;
+            //BackgroundWorker worker = sender as BackgroundWorker;
 
             int currentMesh = 1;
             string meshName = "";
@@ -130,7 +135,8 @@ namespace ObjLoader
             int state = 0;
             while (state < 3)
             {
-                if (worker.CancellationPending == true)
+                //if (worker.CancellationPending == true)
+                if (false)
                 {
                     e.Cancel = true;
                     break;
@@ -147,8 +153,8 @@ namespace ObjLoader
                             {
                                 // notify user about error condition
                                 MessageBox.Show("Error: file format not recognized");
-                                worker.CancelAsync();
-                                e.Cancel = true;
+                                //worker.CancelAsync();
+                                //e.Cancel = true;
                                 return;
                             }
                             ++state;
@@ -174,8 +180,8 @@ namespace ObjLoader
                             {
                                 // notify user of error condition if no "g" in the file
                                 MessageBox.Show("Error: no named mesh (group) found in file");
-                                worker.CancelAsync();
-                                e.Cancel = true;
+                                //worker.CancelAsync();
+                                //e.Cancel = true;
                                 return;
                             }
                             break;
@@ -201,7 +207,9 @@ namespace ObjLoader
                             // "should never happen"
                             break;
                     }
-                    worker.ReportProgress(currentMesh);
+                    //worker.ReportProgress(currentMesh);
+                    _meshCount = currentMesh;
+                    UpdateProgress();
                 }
             }
         }
@@ -221,15 +229,15 @@ namespace ObjLoader
             btnCancelLoading.Visible = false;
             EnableButtons();
 
-            if (e.Cancelled == true)
-            {
-                MessageBox.Show("Canceled!");
-            }
-            else if (e.Error != null)
-            {
-                MessageBox.Show("Error: " + e.Error.Message);
-            }
-            else
+            //if (e.Cancelled == true)
+            //{
+            //    MessageBox.Show("Canceled!");
+            //}
+            //else if (e.Error != null)
+            //{
+            //    MessageBox.Show("Error: " + e.Error.Message);
+            //}
+            //else
             {
                 UpdateMeshList();
             }

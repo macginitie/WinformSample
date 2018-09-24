@@ -65,7 +65,7 @@
             this.panel1.Controls.Add(this.txtObjFile);
             this.panel1.Location = new System.Drawing.Point(9, 11);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(783, 95);
+            this.panel1.Size = new System.Drawing.Size(702, 95);
             this.panel1.TabIndex = 0;
             // 
             // lblLoadProgress
@@ -78,9 +78,10 @@
             // 
             // btnCancelLoading
             // 
+            this.btnCancelLoading.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnCancelLoading.AutoSize = true;
             this.btnCancelLoading.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnCancelLoading.Location = new System.Drawing.Point(641, 56);
+            this.btnCancelLoading.Location = new System.Drawing.Point(558, 56);
             this.btnCancelLoading.Name = "btnCancelLoading";
             this.btnCancelLoading.Size = new System.Drawing.Size(91, 23);
             this.btnCancelLoading.TabIndex = 5;
@@ -105,7 +106,7 @@
             // 
             this.btnBrowse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnBrowse.AutoSize = true;
-            this.btnBrowse.Location = new System.Drawing.Point(639, 19);
+            this.btnBrowse.Location = new System.Drawing.Point(558, 19);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(91, 23);
             this.btnBrowse.TabIndex = 2;
@@ -128,7 +129,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtObjFile.Location = new System.Drawing.Point(106, 21);
             this.txtObjFile.Name = "txtObjFile";
-            this.txtObjFile.Size = new System.Drawing.Size(527, 20);
+            this.txtObjFile.Size = new System.Drawing.Size(446, 20);
             this.txtObjFile.TabIndex = 0;
             this.txtObjFile.TextChanged += new System.EventHandler(this.TxtObjFile_TextChanged);
             // 
@@ -143,7 +144,7 @@
             this.panel2.Controls.Add(this.lstMeshList);
             this.panel2.Location = new System.Drawing.Point(9, 112);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(783, 236);
+            this.panel2.Size = new System.Drawing.Size(702, 205);
             this.panel2.TabIndex = 1;
             // 
             // MeshInfoBox
@@ -155,9 +156,9 @@
             this.MeshInfoBox.Controls.Add(this.lblTriangularFaceCount);
             this.MeshInfoBox.Controls.Add(this.lblNormalCount);
             this.MeshInfoBox.Controls.Add(this.lblVertexCount);
-            this.MeshInfoBox.Location = new System.Drawing.Point(312, 37);
+            this.MeshInfoBox.Location = new System.Drawing.Point(378, 21);
             this.MeshInfoBox.Name = "MeshInfoBox";
-            this.MeshInfoBox.Size = new System.Drawing.Size(450, 154);
+            this.MeshInfoBox.Size = new System.Drawing.Size(271, 154);
             this.MeshInfoBox.TabIndex = 2;
             this.MeshInfoBox.TabStop = false;
             this.MeshInfoBox.Text = "Mesh Information";
@@ -201,7 +202,7 @@
             // lblMeshList
             // 
             this.lblMeshList.AutoSize = true;
-            this.lblMeshList.Location = new System.Drawing.Point(18, 22);
+            this.lblMeshList.Location = new System.Drawing.Point(57, 28);
             this.lblMeshList.Name = "lblMeshList";
             this.lblMeshList.Size = new System.Drawing.Size(44, 13);
             this.lblMeshList.TabIndex = 1;
@@ -213,9 +214,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstMeshList.FormattingEnabled = true;
-            this.lstMeshList.Location = new System.Drawing.Point(20, 43);
+            this.lstMeshList.Location = new System.Drawing.Point(107, 28);
             this.lstMeshList.Name = "lstMeshList";
-            this.lstMeshList.Size = new System.Drawing.Size(276, 147);
+            this.lstMeshList.Size = new System.Drawing.Size(230, 147);
             this.lstMeshList.TabIndex = 0;
             this.lstMeshList.SelectedIndexChanged += new System.EventHandler(this.LstMeshList_SelectedIndexChanged);
             // 
@@ -223,7 +224,7 @@
             // 
             this.btnClose.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClose.AutoSize = true;
-            this.btnClose.Location = new System.Drawing.Point(682, 366);
+            this.btnClose.Location = new System.Drawing.Point(601, 335);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(91, 23);
             this.btnClose.TabIndex = 2;
@@ -250,11 +251,11 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 401);
+            this.ClientSize = new System.Drawing.Size(719, 370);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
-            this.MinimumSize = new System.Drawing.Size(800, 400);
+            this.MinimumSize = new System.Drawing.Size(700, 400);
             this.Name = "MainForm";
             this.Text = ".obj File Info Viewer";
             this.panel1.ResumeLayout(false);
