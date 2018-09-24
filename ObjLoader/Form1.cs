@@ -1,11 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows.Forms;
 
 namespace ObjLoader
@@ -13,6 +7,7 @@ namespace ObjLoader
     public partial class MainForm : Form
     {
         string _objFilePath;
+        ObjFileInfo _objFileInfo = null;
 
         public MainForm()
         {
@@ -46,9 +41,20 @@ namespace ObjLoader
 
         private void BtnLoadFile_Click(object sender, EventArgs e)
         {
+            if ( ! File.Exists(_objFilePath))
+            {
+                MessageBox.Show(String.Format("File [{0}] not found", _objFilePath));
+                return;
+            }
+
             EnableButtons(false);
             btnCancelLoading.Visible = true;
-
+            _objFileInfo = new ObjFileInfo(_objFilePath);
+            if ( ! _objFileInfo.LoadFile())
+            {
+                MessageBox.Show(String.Format("Failed to load {0};\n{1}",
+                    _objFilePath, _objFileInfo.GetErrorInfo()));
+            }
             btnCancelLoading.Visible = false;
             EnableButtons();
         }

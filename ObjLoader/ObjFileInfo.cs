@@ -4,31 +4,30 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Media.Media3D;
 
 namespace ObjLoader
 {
     class ObjFileInfo
     {
-        Point3DCollection _vertices = null;
-        bool _validFile = false;
+        string _filePath = null;
+        string _errorInfo = "";
 
+        // caller should verify existence of file
         public ObjFileInfo(string filePath)
         {
-            if (File.Exists(filePath))
-            {
-
-            }
+            _filePath = filePath;
         }
 
-        public bool ValidFile()
+        public bool LoadFile()
         {
-            return _validFile;
+
+
+            return true;
         }
 
-        public int VertexCount()
+        public string GetErrorInfo()
         {
-            return _vertices.Count;
+            return _errorInfo;
         }
     }
 }
