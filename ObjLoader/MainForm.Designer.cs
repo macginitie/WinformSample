@@ -37,6 +37,7 @@
             this.txtObjFile = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
             this.MeshInfoBox = new System.Windows.Forms.GroupBox();
+            this.lblTextureCoordCount = new System.Windows.Forms.Label();
             this.lblQuadFaceCount = new System.Windows.Forms.Label();
             this.lblTriangularFaceCount = new System.Windows.Forms.Label();
             this.lblNormalCount = new System.Windows.Forms.Label();
@@ -45,8 +46,6 @@
             this.lstMeshList = new System.Windows.Forms.ListBox();
             this.btnClose = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.bgWorker = new System.ComponentModel.BackgroundWorker();
-            this.lblTextureCoordCount = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.MeshInfoBox.SuspendLayout();
@@ -163,6 +162,15 @@
             this.MeshInfoBox.TabStop = false;
             this.MeshInfoBox.Text = "Mesh Information";
             // 
+            // lblTextureCoordCount
+            // 
+            this.lblTextureCoordCount.AutoSize = true;
+            this.lblTextureCoordCount.Location = new System.Drawing.Point(30, 122);
+            this.lblTextureCoordCount.Name = "lblTextureCoordCount";
+            this.lblTextureCoordCount.Size = new System.Drawing.Size(111, 13);
+            this.lblTextureCoordCount.TabIndex = 5;
+            this.lblTextureCoordCount.Text = "5 Texture Coordinates";
+            // 
             // lblQuadFaceCount
             // 
             this.lblQuadFaceCount.AutoSize = true;
@@ -232,21 +240,6 @@
             this.btnClose.UseVisualStyleBackColor = true;
             this.btnClose.Click += new System.EventHandler(this.BtnClose_Click);
             // 
-            // bgWorker
-            // 
-            this.bgWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BgWorker_DoWork);
-            this.bgWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BgWorker_ProgressChanged);
-            this.bgWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BgWorker_RunWorkerCompleted);
-            // 
-            // lblTextureCoordCount
-            // 
-            this.lblTextureCoordCount.AutoSize = true;
-            this.lblTextureCoordCount.Location = new System.Drawing.Point(30, 122);
-            this.lblTextureCoordCount.Name = "lblTextureCoordCount";
-            this.lblTextureCoordCount.Size = new System.Drawing.Size(111, 13);
-            this.lblTextureCoordCount.TabIndex = 5;
-            this.lblTextureCoordCount.Text = "5 Texture Coordinates";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -258,6 +251,7 @@
             this.MinimumSize = new System.Drawing.Size(700, 400);
             this.Name = "MainForm";
             this.Text = ".obj File Info Viewer";
+            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.MainForm_KeyPress);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -288,7 +282,6 @@
         private System.Windows.Forms.Label lblQuadFaceCount;
         private System.Windows.Forms.Label lblTriangularFaceCount;
         private System.Windows.Forms.Label lblNormalCount;
-        private System.ComponentModel.BackgroundWorker bgWorker;
         private System.Windows.Forms.Label lblTextureCoordCount;
     }
 }

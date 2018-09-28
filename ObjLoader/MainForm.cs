@@ -17,12 +17,11 @@ namespace ObjLoader
         {
             InitializeComponent();
             ResetMeshInfoLabels();
-            bgWorker.WorkerReportsProgress = true;
-            bgWorker.WorkerSupportsCancellation = true;
         }
 
         private void ResetMeshInfoLabels()
         {
+            MeshInfoBox.Text = "Mesh Info";
             lblNormalCount.Text = "";
             lblQuadFaceCount.Text = "";
             lblTriangularFaceCount.Text = "";
@@ -30,6 +29,8 @@ namespace ObjLoader
             lblTextureCoordCount.Text = "";
         }
 
+        // handles browsing for a file to load, 
+        // using the standard Windows file open dialog
         private void BtnBrowse_Click(object sender, EventArgs e)
         {
             openFileDialog1.FileName = txtObjFile.Text;
@@ -91,7 +92,8 @@ namespace ObjLoader
                 // early exit
                 return;
             }
-            if (bgWorker.IsBusy)
+            //if (bgWorker.IsBusy)
+            if (false)
             {
                 // I don't expect this to happen, but just in case
                 MessageBox.Show("Load already in progress");
@@ -103,34 +105,30 @@ namespace ObjLoader
                 EnableButtons(false);
                 btnCancelLoading.Visible = true;
                 UpdateProgress();
-                // Start the asynchronous operation.
-                //bgWorker.RunWorkerAsync();
-                BgWorker_DoWork(null, null);
-                // fall back
-                BgWorker_RunWorkerCompleted(null, null);
+                // Start the file load operation.
+                LoadFile();
+                LoadFileCompleted();
             }
         }
 
         // This event handler is where the time-consuming work is done.
         // this method is a mess & should be refactored :-/ 
-        private void BgWorker_DoWork(object sender, DoWorkEventArgs e)
+        private void LoadFile()
         {
-            //BackgroundWorker worker = sender as BackgroundWorker;
-
             int currentMesh = 1;
             string meshName = "";
             string[] fileLines = null;
             int index = 0;
             // require at least "g mesh[\n]v x y z[\n]v a b c[\n]v u v w[\n]f 0 1 2"
             const int MinFileLines = 5; 
-            // 3-state FSM: reading file; scanning for 1st "g"; loading mesh data
+            // 3-state FSM: 1) reading file; 2) scanning for line with "g [meshname]"; 3) loading mesh data
             int state = 0;
             while (state < 3)
             {
                 //if (worker.CancellationPending == true)
                 if (false)
                 {
-                    e.Cancel = true;
+//                    e.Cancel = true;
                     break;
                 }
                 else
@@ -168,9 +166,9 @@ namespace ObjLoader
                                     }
                                 }
                             }
-                            if (state == 1)
+                            if (index == fileLines.Length)
                             {
-                                // notify user of error condition if no "g" in the file
+                                // notify user of error condition if no "g" found in the file
                                 MessageBox.Show("Error: no named mesh (group) found in file");
                                 //worker.CancelAsync();
                                 //e.Cancel = true;
@@ -206,40 +204,24 @@ namespace ObjLoader
             }
         }
 
-        // This event handler updates the progress. Using "percentage"
-        // to hold the mesh # is a hack, but BackgroundWorker has limitations  
-        private void BgWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            _meshCount = e.ProgressPercentage;
-            UpdateProgress();
-        }
-
-        // This event handler deals with the results of the background operation.
-        private void BgWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        // This handles completion of the background operation.
+        private void LoadFileCompleted()
         {
             lblLoadProgress.Visible = false;
             btnCancelLoading.Visible = false;
             EnableButtons();
-
-            //if (e.Cancelled == true)
-            //{
-            //    MessageBox.Show("Canceled!");
-            //}
-            //else if (e.Error != null)
-            //{
-            //    MessageBox.Show("Error: " + e.Error.Message);
-            //}
-            //else
-            {
-                UpdateMeshList();
-            }
+            UpdateMeshList();
         }
 
+        // load the names of all meshes found in the file into the listbox
         private void UpdateMeshList()
         {
-            foreach (MeshInfo meshInfo in _meshInfoList)
+            if (_meshInfoList != null)
             {
-                lstMeshList.Items.Add(meshInfo.MeshName);
+                foreach (MeshInfo meshInfo in _meshInfoList)
+                {
+                    lstMeshList.Items.Add(meshInfo.MeshName);
+                }
             }
         }
 
@@ -257,12 +239,16 @@ namespace ObjLoader
 
         private void BtnCancelLoading_Click(object sender, EventArgs e)
         {
-            // this is set true at init, and never set false, but...
-            // there's no real harm leaving this check here anyway
-            if (bgWorker.WorkerSupportsCancellation) // belt & suspenders :)
+            // 2DO
+        }
+
+        // Escape key is commonly used as a shortcut for cancelling an operation
+        private void MainForm_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // handle Escape key
+            if (e.KeyChar == (char)27)
             {
-                // Cancel the asynchronous operation.
-                bgWorker.CancelAsync();
+                BtnCancelLoading_Click(sender, e);
             }
         }
     }

@@ -18,6 +18,13 @@ namespace ObjLoader
         public FaceIndexTuple(string tuple)
         {
             string[] parts = tuple.Split(new char[] { '/' });
+            for (int i = 0; i < parts.Length; ++i)
+            {
+                if (String.IsNullOrWhiteSpace(parts[i]))
+                {
+                    parts[i] = "0";    // 2DO: verify an appropriate value to use here
+                }
+            }
             switch (parts.Length)
             {
                 case 1:
@@ -49,7 +56,7 @@ namespace ObjLoader
             }
             catch (Exception)
             {
-                VertexIndex = 0;    // 2DO: should this be -1 ?
+                VertexIndex = 0;    // 2DO: verify an appropriate value to use here
             }
 
             try
@@ -58,7 +65,7 @@ namespace ObjLoader
             }
             catch (Exception)
             {
-                NormalIndex = 0;
+                NormalIndex = 0;    // 2DO: verify an appropriate value to use here
             }
 
             try
@@ -67,7 +74,7 @@ namespace ObjLoader
             }
             catch (Exception)
             {
-                UVCoordIndex = 0;
+                UVCoordIndex = 0;   // 2DO: verify an appropriate value to use here
             }
         }
     }
