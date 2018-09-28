@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading; // only used to test the Cancel/progress update
+//using System.Threading; // only used to test the Cancel/progress update
 using System.Windows.Media.Media3D;
 
 
@@ -26,6 +26,8 @@ namespace ObjLoader
         public int TriangularFaceCount { get { return _triangles.Count; } }
         public int QuadFaceCount { get { return _quadrilaterals.Count; } }
 
+        public const string MeshEndFlag = "NO-MORE-MESHES";
+
         public MeshInfo()
         {
             _vertices = new List<Point3D>();
@@ -44,9 +46,9 @@ namespace ObjLoader
         }
 
         // sets meshname to "" if no more meshes
-        public void LoadFileLines(string[] fileLines, ref int index, out string nextMeshName)
+        public string LoadFileLines(string[] fileLines, ref int index)
         {
-            nextMeshName = "";
+            string nextMeshName = MeshEndFlag;
             while (index < fileLines.Length)
             {
                 if (! ProcessLine(fileLines[index++], ref nextMeshName))
@@ -54,8 +56,9 @@ namespace ObjLoader
                     break;
                 }
                 // used for testing Cancel, progress; without this it's too fast
-                Thread.Sleep(10);
+                //Thread.Sleep(10);
             }
+            return nextMeshName;
         }
 
         /// <summary>
@@ -73,7 +76,7 @@ namespace ObjLoader
                 switch (parts[0])
                 {
                     case "g":
-                        meshName = parts[1]; // 2DO: handle error condition if "g" is alone on the line
+                        meshName = parts[1]; // 2DO: is it an error condition if "g" is alone on the line ?
                         return false;
                     case "v":
                         Point3D v = new Point3D(Convert.ToDouble(parts[1]), Convert.ToDouble(parts[2]), Convert.ToDouble(parts[3]));

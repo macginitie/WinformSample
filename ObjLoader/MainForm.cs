@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using System.Windows.Media.Media3D;
+
 
 namespace ObjLoader
 {
@@ -194,9 +194,9 @@ namespace ObjLoader
                             {
                                 MeshName = meshName
                             };
-                            meshInfo.LoadFileLines(fileLines, ref index, out meshName);
+                            meshName = meshInfo.LoadFileLines(fileLines, ref index);
                             _meshInfoList.Add(meshInfo);
-                            if (String.IsNullOrEmpty(meshName))
+                            if (MeshInfo.MeshEndFlag == meshName)
                             {
                                 // all done loading
                                 ++state;
@@ -220,6 +220,11 @@ namespace ObjLoader
         private void LoadFileCompleted(object sender,
                                        RunWorkerCompletedEventArgs e)
         {
+            if (e.Cancelled)
+            {
+                UseWaitCursor = false;
+                MessageBox.Show("file load canceled; one or more meshes may not have been loaded");
+            }
             lblLoadProgress.Visible = false;
             btnCancelLoading.Visible = false;
             EnableButtons();
@@ -252,6 +257,8 @@ namespace ObjLoader
 
         private void BtnCancelLoading_Click(object sender, EventArgs e)
         {
+            btnCancelLoading.Enabled = false;   // let the user know we noticed
+            UseWaitCursor = true;
             _bw.CancelAsync();
         }
 
