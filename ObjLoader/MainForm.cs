@@ -9,14 +9,23 @@ namespace ObjLoader
 {
     public partial class MainForm : Form
     {
-        string _objFilePath;
-        int _meshCount = 0;
-        List<MeshInfo> _meshInfoList = null;
-        
+        static string _objFilePath;
+        static int _meshCount = 0;
+        static List<MeshInfo> _meshInfoList = null;
+        static BackgroundWorker _bw;
+
         public MainForm()
         {
             InitializeComponent();
             ResetMeshInfoLabels();
+            _bw = new BackgroundWorker
+            {
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true
+            };
+            _bw.DoWork += LoadFile;
+            _bw.ProgressChanged += UpdateProgress;
+            _bw.RunWorkerCompleted += LoadFileCompleted;
         }
 
         private void ResetMeshInfoLabels()
@@ -77,9 +86,11 @@ namespace ObjLoader
             Refresh();
         }
 
-        public void UpdateProgress()
+        private void UpdateProgress(object sender, ProgressChangedEventArgs e)
         {
+            _meshCount = e.ProgressPercentage;
             lblLoadProgress.Text = String.Format("Loading mesh #{0}", _meshCount);
+            lblLoadProgress.Visible = true;
             Refresh();
         }
 
@@ -92,8 +103,7 @@ namespace ObjLoader
                 // early exit
                 return;
             }
-            //if (bgWorker.IsBusy)
-            if (false)
+            if (_bw.IsBusy)
             {
                 // I don't expect this to happen, but just in case
                 MessageBox.Show("Load already in progress");
@@ -104,18 +114,16 @@ namespace ObjLoader
                 ClearMeshInfoList();
                 EnableButtons(false);
                 btnCancelLoading.Visible = true;
-                UpdateProgress();
                 // Start the file load operation.
-                LoadFile();
-                LoadFileCompleted();
+                _bw.RunWorkerAsync();
             }
         }
 
         // This event handler is where the time-consuming work is done.
-        // this method is a mess & should be refactored :-/ 
-        private void LoadFile()
+        static void LoadFile(object sender, DoWorkEventArgs e)
         {
             int currentMesh = 1;
+            _bw.ReportProgress(currentMesh);
             string meshName = "";
             string[] fileLines = null;
             int index = 0;
@@ -125,10 +133,9 @@ namespace ObjLoader
             int state = 0;
             while (state < 3)
             {
-                //if (worker.CancellationPending == true)
-                if (false)
+                if (_bw.CancellationPending)
                 {
-//                    e.Cancel = true;
+                    e.Cancel = true;
                     break;
                 }
                 else
@@ -143,8 +150,8 @@ namespace ObjLoader
                             {
                                 // notify user about error condition
                                 MessageBox.Show("Error: file format not recognized");
-                                //worker.CancelAsync();
-                                //e.Cancel = true;
+                                _bw.CancelAsync();
+                                e.Cancel = true;
                                 return;
                             }
                             ++state;
@@ -159,7 +166,14 @@ namespace ObjLoader
                                 {
                                     if (parts[0] == "g")
                                     {
-                                        meshName = parts[1]; // danger: exception if line contains only "g" (2DO)
+                                        if (parts.Length > 1)
+                                        {
+                                            meshName = parts[1];
+                                        }
+                                        else
+                                        {
+                                            meshName = "[unnamed]";
+                                        }
                                         _meshInfoList = new List<MeshInfo>();
                                         ++state;
                                         break;
@@ -170,8 +184,8 @@ namespace ObjLoader
                             {
                                 // notify user of error condition if no "g" found in the file
                                 MessageBox.Show("Error: no named mesh (group) found in file");
-                                //worker.CancelAsync();
-                                //e.Cancel = true;
+                                _bw.CancelAsync();
+                                e.Cancel = true;
                                 return;
                             }
                             break;
@@ -197,15 +211,14 @@ namespace ObjLoader
                             // "should never happen"
                             break;
                     }
-                    //worker.ReportProgress(currentMesh);
-                    _meshCount = currentMesh;
-                    UpdateProgress();
+                    _bw.ReportProgress(currentMesh);
                 }
             }
         }
 
         // This handles completion of the background operation.
-        private void LoadFileCompleted()
+        private void LoadFileCompleted(object sender,
+                                       RunWorkerCompletedEventArgs e)
         {
             lblLoadProgress.Visible = false;
             btnCancelLoading.Visible = false;
@@ -239,7 +252,7 @@ namespace ObjLoader
 
         private void BtnCancelLoading_Click(object sender, EventArgs e)
         {
-            // 2DO
+            _bw.CancelAsync();
         }
 
         // Escape key is commonly used as a shortcut for cancelling an operation

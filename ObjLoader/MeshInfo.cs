@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading; // only used to test the Cancel/progress update
 using System.Windows.Media.Media3D;
 
 
@@ -7,11 +8,11 @@ namespace ObjLoader
 {
     class MeshInfo
     {
-        Point3DCollection _vertices = null;
-        Vector3DCollection _normals = null;
-        // texture coords are only 2D, but Point3DCollection is convenient
+        List<Point3D> _vertices = null;
+        List<Point3D> _normals = null;
+        // texture coords are only 2D, but Point2D doesn't exist
         // so I just set the 3rd value to 0.0
-        Point3DCollection _uvCoords = null;
+        List<Point3D> _uvCoords = null;
 
         List<FaceDefinition> _triangles = null;
         List<FaceDefinition> _quadrilaterals = null;
@@ -27,15 +28,15 @@ namespace ObjLoader
 
         public MeshInfo()
         {
-            _vertices = new Point3DCollection();
-            _normals = new Vector3DCollection();
-            _uvCoords = new Point3DCollection();
+            _vertices = new List<Point3D>();
+            _normals = new List<Point3D>();
+            _uvCoords = new List<Point3D>();
             _triangles = new List<FaceDefinition>();
             _quadrilaterals = new List<FaceDefinition>();
         }
 
-        public MeshInfo(Point3DCollection vert, Vector3DCollection norm, 
-            Point3DCollection uvCoord)
+        public MeshInfo(List<Point3D> vert, List<Point3D> norm,
+            List<Point3D> uvCoord)
         {
             _vertices = vert;
             _normals = norm;
@@ -52,6 +53,8 @@ namespace ObjLoader
                 {
                     break;
                 }
+                // used for testing Cancel, progress; without this it's too fast
+                Thread.Sleep(10);
             }
         }
 
@@ -77,7 +80,7 @@ namespace ObjLoader
                         _vertices.Add(v);
                         break;
                     case "vn":
-                        Vector3D vn = new Vector3D(Convert.ToDouble(parts[1]), Convert.ToDouble(parts[2]), Convert.ToDouble(parts[3]));
+                        Point3D vn = new Point3D(Convert.ToDouble(parts[1]), Convert.ToDouble(parts[2]), Convert.ToDouble(parts[3]));
                         _normals.Add(vn);
                         break;
                     case "vt":
