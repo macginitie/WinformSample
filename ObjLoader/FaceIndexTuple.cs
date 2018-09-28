@@ -22,7 +22,10 @@ namespace ObjLoader
             {
                 if (String.IsNullOrWhiteSpace(parts[i]))
                 {
-                    parts[i] = "0";    // 2DO: verify an appropriate value to use here
+                    // 2DO: verify an appropriate value to use here
+                    // ... for purposes of the present exercise, this is fine
+                    // ... but a real utility might want to handle it differently
+                    parts[i] = "0";
                 }
             }
             switch (parts.Length)
@@ -47,16 +50,22 @@ namespace ObjLoader
             Initialize(v, n, uv);
         }
 
+        // 2DO: verify an appropriate value to use here when one of the
+        // ... values supplied is missing (i.e., the empty string "")
+        // ... "0" is fine for this exercise but maybe not for a real utility
         private void Initialize(string v, string n, string uv)
-        { 
-            // 2DO: determine if ToUInt64 would be better here
+        {
+            // 2DO: determine if Convert.ToUInt64 would be better here
+            // ... in my limited testing this is fine as is, but for
+            // ... a real utility, a specification of .obj file formats
+            // ... to be supported would supply the answer
             try
             {
                 VertexIndex = Convert.ToInt32(v);
             }
             catch (Exception)
             {
-                VertexIndex = 0;    // 2DO: verify an appropriate value to use here
+                VertexIndex = 0;
             }
 
             try
@@ -65,7 +74,7 @@ namespace ObjLoader
             }
             catch (Exception)
             {
-                NormalIndex = 0;    // 2DO: verify an appropriate value to use here
+                NormalIndex = 0;
             }
 
             try
@@ -74,7 +83,7 @@ namespace ObjLoader
             }
             catch (Exception)
             {
-                UVCoordIndex = 0;   // 2DO: verify an appropriate value to use here
+                UVCoordIndex = 0;
             }
         }
     }

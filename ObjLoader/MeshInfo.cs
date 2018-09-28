@@ -76,7 +76,14 @@ namespace ObjLoader
                 switch (parts[0])
                 {
                     case "g":
-                        meshName = parts[1]; // 2DO: is it an error condition if "g" is alone on the line ?
+                        if (parts.Length > 1)
+                        {
+                            meshName = parts[1];
+                        }
+                        else
+                        {
+                            meshName = "[no name]";
+                        }
                         return false;
                     case "v":
                         Point3D v = new Point3D(Convert.ToDouble(parts[1]), Convert.ToDouble(parts[2]), Convert.ToDouble(parts[3]));
