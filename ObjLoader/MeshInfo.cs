@@ -94,7 +94,7 @@ namespace ObjLoader
                         _normals.Add(vn);
                         break;
                     case "vt":
-                        // setting 3rd coord to 0.0 so I can use the Point3DCollection class (just for convenience)
+                        // setting 3rd coord to 0.0 so I can use the Point3D class (just for convenience)
                         Point3D vt = new Point3D(Convert.ToDouble(parts[1]), Convert.ToDouble(parts[2]), 0.0);
                         _uvCoords.Add(vt);
                         break;

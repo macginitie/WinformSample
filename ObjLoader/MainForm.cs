@@ -119,7 +119,13 @@ namespace ObjLoader
             }
         }
 
-        // This event handler is where the time-consuming work is done.
+        static void Cancel(DoWorkEventArgs e)
+        {
+            _bw.CancelAsync();
+            e.Cancel = true;
+        }
+
+        // This event handler is where the (potentially) time-consuming work is done.
         static void LoadFile(object sender, DoWorkEventArgs e)
         {
             int currentMesh = 1;
@@ -133,6 +139,9 @@ namespace ObjLoader
             int state = 0;
             while (state < 3)
             {
+                _bw.ReportProgress(currentMesh);
+                // the reason for using the state machine loop approach is 
+                // to provide a convenient place to put this check for cancellation
                 if (_bw.CancellationPending)
                 {
                     e.Cancel = true;
@@ -140,7 +149,6 @@ namespace ObjLoader
                 }
                 else
                 {
-                    // Perform a time consuming operation and report progress.
                     switch (state)
                     {
                         case 0:
@@ -150,8 +158,7 @@ namespace ObjLoader
                             {
                                 // notify user about error condition
                                 MessageBox.Show("Error: file format not recognized");
-                                _bw.CancelAsync();
-                                e.Cancel = true;
+                                Cancel(e);
                                 return;
                             }
                             ++state;
@@ -184,16 +191,19 @@ namespace ObjLoader
                             {
                                 // notify user of error condition if no "g" found in the file
                                 MessageBox.Show("Error: no named mesh (group) found in file");
-                                _bw.CancelAsync();
-                                e.Cancel = true;
+                                Cancel(e);
                                 return;
                             }
                             break;
                         case 2:
+                            // load mesh data
                             MeshInfo meshInfo = new MeshInfo
                             {
                                 MeshName = meshName
                             };
+                            // NOTE side effect of processing the current mesh: 
+                            // if another mesh ("g") encountered, returns its name 
+                            // else returns a special "flag" name
                             meshName = meshInfo.LoadFileLines(fileLines, ref index);
                             _meshInfoList.Add(meshInfo);
                             if (MeshInfo.MeshEndFlag == meshName)
@@ -203,15 +213,17 @@ namespace ObjLoader
                             }
                             else
                             {
-                                // another mesh to load
+                                // there is another mesh to load, we'll get it on the 
+                                // next pass through the while loop (remaining in this
+                                // same FSM state 2)
                                 ++currentMesh;
                             }
                             break;
                         default:
                             // "should never happen"
+                            // for a professional utility I would log an error message here
                             break;
                     }
-                    _bw.ReportProgress(currentMesh);
                 }
             }
         }
